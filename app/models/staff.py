@@ -9,6 +9,7 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.user import User
     from app.models.service import Service
+    from app.models.schedule import StaffSchedule
 
 
 class StaffProfile(Base):
@@ -24,3 +25,7 @@ class StaffProfile(Base):
     user: Mapped["User"] = relationship(back_populates="staff_profile")
     services: Mapped[List["Service"]] = relationship(
         secondary="staff_services", back_populates="staff_members")
+    
+    schedules: Mapped[List["StaffSchedule"]] = relationship(
+        back_populates="staff", cascade="all, delete-orphan"
+    )
