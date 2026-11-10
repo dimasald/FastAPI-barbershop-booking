@@ -1,5 +1,5 @@
 import uuid
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -23,9 +23,9 @@ class StaffProfile(Base):
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     user: Mapped["User"] = relationship(back_populates="staff_profile")
-    services: Mapped[List["Service"]] = relationship(
+    services: Mapped[list["Service"]] = relationship(
         secondary="staff_services", back_populates="staff_members")
     
-    schedules: Mapped[List["StaffSchedule"]] = relationship(
+    schedules: Mapped[list["StaffSchedule"]] = relationship(
         back_populates="staff", cascade="all, delete-orphan"
     )

@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String, DateTime, Enum as SAEnum
@@ -32,7 +32,7 @@ class User(Base):
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
     )
 
     staff_profile: Mapped[Optional["StaffProfile"]] = relationship(

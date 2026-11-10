@@ -12,24 +12,24 @@ from app.schemas.schedule import StaffScheduleCreate, StaffScheduleResponse
 
 router = APIRouter(prefix="/staff", tags=["Schedules"])
 
+
 @router.post("/{staff_id}/schedules", response_model=StaffScheduleResponse)
 def create_schedule(
     staff_id: uuid.UUID,
     schedule_in: StaffScheduleCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     if current_user.role not in [UserRole.admin, UserRole.staff]:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Not authorized to create schedules"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to create schedules",
         )
 
-    if current_user.role == UserRole.staff:
-        if not current_user.staff_profile or current_user.staff_profile.id != staff_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Staff members can only manage their own schedule"
+    if current_user.role == UserRole.staff and (not current_user.staff_profile or current_user.staff_profile.id != staff_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+                detail="Staff members can only manage their own schedule",
             )
 
     staff = db.scalars(select(StaffProfile).where(StaffProfile.id == staff_id)).first()
@@ -38,8 +38,8 @@ def create_schedule(
 
     if schedule_in.start_time >= schedule_in.end_time:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Start time must be before end time"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Start time must be before end time",
         )
 
     overlap_query = select(StaffSchedule).where(
@@ -47,23 +47,23 @@ def create_schedule(
         StaffSchedule.day_of_week == schedule_in.day_of_week,
         StaffSchedule.is_active == True,
         StaffSchedule.start_time < schedule_in.end_time,
-        StaffSchedule.end_time > schedule_in.start_time
+        StaffSchedule.end_time > schedule_in.start_time,
     )
-    
+
     overlapping_schedule = db.scalars(overlap_query).first()
     if overlapping_schedule:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, 
-            detail="Schedule overlaps with an existing shift"
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Schedule overlaps with an existing shift",
         )
 
     new_schedule = StaffSchedule(
         staff_id=staff_id,
         day_of_week=schedule_in.day_of_week,
         start_time=schedule_in.start_time,
-        end_time=schedule_in.end_time
+        end_time=schedule_in.end_time,
     )
-    
+
     db.add(new_schedule)
     db.commit()
     db.refresh(new_schedule)

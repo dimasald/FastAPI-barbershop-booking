@@ -5,7 +5,7 @@ Revises: ec2e96bc7bec
 Create Date: 2026-11-06 15:35:39.110138
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 from alembic import op
 import sqlalchemy as sa
@@ -13,9 +13,9 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'd7d991d01870'
-down_revision: Union[str, Sequence[str], None] = 'ec2e96bc7bec'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = 'ec2e96bc7bec'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:

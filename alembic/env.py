@@ -7,7 +7,6 @@ from alembic import context
 
 from app.core.config import settings
 from app.db.base import Base
-import app.models
 target_metadata = Base.metadata
 
 # this is the Alembic Config object, which provides

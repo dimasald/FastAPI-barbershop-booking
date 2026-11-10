@@ -1,5 +1,5 @@
 import uuid
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Integer, Numeric, ForeignKey, Table, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,6 +24,6 @@ class Service(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer)
     price: Mapped[float] = mapped_column(Numeric(10, 2))
 
-    staff_members: Mapped[List["StaffProfile"]] = relationship(
+    staff_members: Mapped[list["StaffProfile"]] = relationship(
         secondary=staff_services, back_populates="services"
     )
