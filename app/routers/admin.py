@@ -6,15 +6,15 @@ from app.db.session import get_db
 from app.api.deps import get_current_user
 from app.models.user import User, UserRole
 from app.models.staff import StaffProfile
-from app.schemas.staff import StaffCreate, StaffProfileResponse
+from app.schemas.staff import StaffScheduleCreate, StaffScheduleResponse
 from app.core.security import hash_password
 from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(prefix="/admin", tags=["Admin Management"])
 
-@router.post("/staff", response_model=StaffProfileResponse)
+@router.post("/staff", response_model=StaffScheduleResponse)
 def create_staff(
-    staff_in: StaffCreate,
+    staff_in: StaffScheduleCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):

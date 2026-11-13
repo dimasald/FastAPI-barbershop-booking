@@ -20,6 +20,11 @@ def create_schedule(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    staff = db.scalars(select(StaffProfile).where(StaffProfile.id == staff_id)).first()
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    
+    
     if current_user.role not in [UserRole.admin, UserRole.staff]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -31,10 +36,6 @@ def create_schedule(
             status_code=status.HTTP_403_FORBIDDEN,
                 detail="Staff members can only manage their own schedule",
             )
-
-    staff = db.scalars(select(StaffProfile).where(StaffProfile.id == staff_id)).first()
-    if not staff:
-        raise HTTPException(status_code=404, detail="Staff not found")
 
     if schedule_in.start_time >= schedule_in.end_time:
         raise HTTPException(
